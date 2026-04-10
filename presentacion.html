@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontera Frutal — Sweet Vibes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,200;0,300;0,400;0,600;1,200;1,300;1,400&family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+
+/* ════════════════════════════════════════
+   RESET & BASE
+════════════════════════════════════════ */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --c-dark:   #0a0a0a;
+  --c-trop:   #be6c12;
+  --c-pink:   #be3f62;
+  --c-verano: #5e0e1b;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--c-dark);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* ════════════════════════════════════════
+   FIXED BACKGROUND (scroll color morph)
+════════════════════════════════════════ */
+#bg-morph {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background: var(--c-dark);
+  transition: none;
+  pointer-events: none;
+}
+
+/* ════════════════════════════════════════
+   GRAIN OVERLAY
+════════════════════════════════════════ */
+#grain {
+  position: fixed;
+  inset: -50%;
+  width: 200%; height: 200%;
+  z-index: 900;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23f)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  animation: grain-drift 0.5s steps(1) infinite;
+}
+@keyframes grain-drift {
+  0%   { transform: translate(0,0); }
+  20%  { transform: translate(-2%,-1%); }
+  40%  { transform: translate(1%,2%); }
+  60%  { transform: translate(-1%,1%); }
+  80%  { transform: translate(2%,-2%); }
+  100% { transform: translate(0,0); }
+}
+
+/* ════════════════════════════════════════
+   CUSTOM CURSOR
+════════════════════════════════════════ */
+#cur-dot {
+  position: fixed;
+  width: 8px; height: 8px;
+  background: #fff;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+}
+#cur-ring {
+  position: fixed;
+  width: 32px; height: 32px;
+  border: 1px solid rgba(255,255,255,0.45);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  mix-blend-mode: difference;
+}
+
+/* ════════════════════════════════════════
+   HEADER
+════════════════════════════════════════ */
+header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 800;
+  padding: 0 52px;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(8,8,8,0.45);
+  backdrop-filter: blur(32px) saturate(1.2);
+  -webkit-backdrop-filter: blur(32px) saturate(1.2);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.h-logo {
+  height: 34px;
+  width: auto;
+  display: block;
+  filter: brightness(0) invert(1);
+  opacity: 0.9;
+}
+
+/* animated spinner */
+.h-spin {
+  position: relative;
+  width: 38px; height: 38px;
+  flex-shrink: 0;
+}
+.h-spin svg {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  animation: spin-slow 3s linear infinite;
+}
+.h-spin-dot {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 5px; height: 5px;
+  background: rgba(255,255,255,0.7);
+  border-radius: 50%;
+  transform: translate(-50%,-50%);
+  animation: pulse-dot 2.4s ease-in-out infinite;
+}
+@keyframes spin-slow { to { transform: rotate(360deg); } }
+@keyframes pulse-dot {
+  0%,100% { opacity: .4; transform: translate(-50%,-50%) scale(1); }
+  50%     { opacity: 1;  transform: translate(-50%,-50%) scale(1.6); }
+}
+
+/* ════════════════════════════════════════
+   HERO — VIDEO BANNER
+════════════════════════════════════════ */
+#hero {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+#hero-vid {
+  position: absolute;
+  inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(to bottom,
+      rgba(0,0,0,0.55) 0%,
+      rgba(0,0,0,0.15) 40%,
+      rgba(0,0,0,0.62) 100%);
+}
+
+.hero-body {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0;
+}
+
+.hero-eyebrow {
+  font-family: 'Inter', sans-serif;
+  font-size: 9.5px;
+  font-weight: 300;
+  letter-spacing: 0.58em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.32);
+  margin-bottom: 32px;
+}
+
+.hero-logo {
+  height: clamp(52px, 8vw, 108px);
+  width: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.95;
+  margin-bottom: 28px;
+}
+
+.hero-claim {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(22px, 3vw, 42px);
+  letter-spacing: 0.35em;
+  color: rgba(255,255,255,0.55);
+  text-transform: uppercase;
+}
+
+/* scroll cue */
+.hero-scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.hero-scroll-txt {
+  font-family: 'Inter', sans-serif;
+  font-size: 8.5px;
+  font-weight: 300;
+  letter-spacing: 0.48em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.25);
+}
+.hero-scroll-line {
+  width: 1px;
+  height: 50px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.5), transparent);
+  transform-origin: top;
+  animation: scroll-line 2.2s ease-in-out infinite;
+}
+@keyframes scroll-line {
+  0%,100% { transform: scaleY(1); opacity: .65; }
+  50%     { transform: scaleY(.28); opacity: .18; }
+}
+
+/* ════════════════════════════════════════
+   PRODUCT SECTIONS
+════════════════════════════════════════ */
+.ps {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 100px 80px 72px;
+  z-index: 1;
+}
+
+/* each section's flat color — shown only when bg-morph isn't visible */
+#ps-trop   { background: transparent; }
+#ps-pink   { background: transparent; }
+#ps-verano { background: transparent; }
+
+/* vignette focus */
+.ps::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 75% 75% at 50% 50%,
+    transparent 28%,
+    rgba(0,0,0,0.38) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* floating glow blobs */
+.glow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  filter: blur(60px);
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation: glow-in 1.2s var(--ease-out-expo) forwards;
+}
+@keyframes glow-in { to { opacity: 1; } }
+
+/* ── section labels ── */
+.ps-label {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  margin-bottom: 36px;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.9s var(--ease-out-expo), transform 0.9s var(--ease-out-expo);
+}
+.ps-label.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ps-num {
+  font-family: 'Inter', sans-serif;
+  font-size: 9px;
+  font-weight: 300;
+  letter-spacing: 0.6em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 10px;
+}
+
+.ps-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(42px, 6.5vw, 88px);
+  color: #fff;
+  letter-spacing: 0.06em;
+  line-height: 1;
+  text-shadow: 0 2px 48px rgba(0,0,0,0.3);
+}
+
+.ps-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(14px, 1.7vw, 22px);
+  letter-spacing: 0.2em;
+  color: rgba(255,255,255,0.52);
+  margin-top: 9px;
+}
+
+/* ════════════════════════════════════════
+   CAROUSEL
+════════════════════════════════════════ */
+.carousel-outer {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 520px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 1s 0.18s var(--ease-out-expo), transform 1s 0.18s var(--ease-out-expo);
+}
+.carousel-outer.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.carousel {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 16px;
+}
+
+.carousel-track {
+  display: flex;
+  will-change: transform;
+  transition: transform 0.72s cubic-bezier(0.86, 0, 0.07, 1);
+}
+
+.c-slide {
+  flex: 0 0 100%;
+  position: relative;
+}
+
+.c-slide img {
+  width: 100%;
+  height: auto;
+  max-height: 68vh;
+  object-fit: contain;
+  display: block;
+  border-radius: 16px;
+  filter: drop-shadow(0 20px 72px rgba(0,0,0,0.7));
+}
+
+/* arrow buttons */
+.c-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 20;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: white;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  cursor: none;
+  display: flex; align-items: center; justify-content: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: background 0.22s, border-color 0.22s, transform 0.22s;
+  outline: none;
+}
+.c-arrow:hover {
+  background: rgba(255,255,255,0.22);
+  border-color: rgba(255,255,255,0.4);
+  transform: translateY(-50%) scale(1.06);
+}
+.c-arrow svg {
+  width: 15px; height: 15px;
+  stroke: rgba(255,255,255,0.85);
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.c-arrow.prev { left: -23px; }
+.c-arrow.next { right: -23px; }
+
+/* dots */
+.c-dots {
+  display: flex;
+  gap: 9px;
+  margin-top: 20px;
+}
+.c-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.28);
+  border: none;
+  cursor: none;
+  padding: 0;
+  transition: background 0.3s, transform 0.3s;
+}
+.c-dot.on {
+  background: rgba(255,255,255,0.9);
+  transform: scale(1.4);
+}
+
+/* ════════════════════════════════════════
+   FOOTER
+════════════════════════════════════════ */
+footer {
+  position: relative;
+  z-index: 1;
+  background: #050505;
+  border-top: 1px solid rgba(255,255,255,0.05);
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 13px;
+}
+.ft-logo {
+  height: 32px; width: auto;
+  filter: brightness(0) invert(1);
+  opacity: 0.5;
+}
+.ft-divider { width: 32px; height: 1px; background: rgba(255,255,255,0.1); }
+.ft-claim {
+  font-family: 'Cormorant Garamond', serif;
+  font-style: italic;
+  font-size: 13px;
+  letter-spacing: 0.22em;
+  color: rgba(255,255,255,0.24);
+}
+.ft-copy {
+  font-family: 'Inter', sans-serif;
+  font-size: 9.5px;
+  letter-spacing: 0.1em;
+  color: rgba(255,255,255,0.13);
+}
+
+</style>
+</head>
+<body>
+
+<!-- overlays -->
+<div id="bg-morph"></div>
+<div id="grain"></div>
+<div id="cur-dot"></div>
+<div id="cur-ring"></div>
+
+<!-- ══════════════════════════════
+     HEADER
+══════════════════════════════ -->
+<header>
+  <img src="LOGO FRUTAL.png" class="h-logo" alt="Frontera Frutal">
+  <div class="h-spin">
+    <svg viewBox="0 0 38 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="19" cy="19" r="17" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+      <path d="M19 2 A17 17 0 0 1 36 19" stroke="rgba(255,255,255,0.65)" stroke-width="1.2" stroke-linecap="round"/>
+    </svg>
+    <div class="h-spin-dot"></div>
+  </div>
+</header>
+
+<!-- ══════════════════════════════
+     HERO
+══════════════════════════════ -->
+<section id="hero" data-bg="#0a0a0a">
+  <video id="hero-vid" autoplay muted loop playsinline preload="auto">
+    <source src="VIDEO-frutal.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-body">
+    <p class="hero-eyebrow">Línea Frutal 2026</p>
+    <img src="LOGO FRUTAL.png" class="hero-logo" alt="Frontera Frutal">
+    <p class="hero-claim">Sweet Vibes</p>
+  </div>
+
+  <div class="hero-scroll">
+    <div class="hero-scroll-line"></div>
+    <span class="hero-scroll-txt">Scroll</span>
+  </div>
+</section>
+
+<!-- ══════════════════════════════
+     TROPICAL
+══════════════════════════════ -->
+<section class="ps" id="ps-trop" data-bg="#be6c12">
+
+  <!-- glow blobs -->
+  <div class="glow" style="width:500px;height:500px;left:-8%;top:-15%;background:#f0a830;opacity:0;animation-delay:0s;--d:0s"></div>
+  <div class="glow" style="width:350px;height:350px;right:-5%;bottom:0%;background:#8b3a9a;opacity:0;animation-delay:0.3s"></div>
+  <div class="glow" style="width:280px;height:280px;right:15%;top:10%;background:#ffc840;opacity:0;animation-delay:0.15s"></div>
+
+  <div class="ps-label" id="lbl-trop">
+    <p class="ps-num">01</p>
+    <h2 class="ps-name">Tropical</h2>
+    <p class="ps-sub">Mango &amp; Maracuyá</p>
+  </div>
+
+  <div class="carousel-outer" id="co-trop">
+    <div class="carousel" id="car-trop">
+      <div class="carousel-track" id="ct-trop">
+        <div class="c-slide"><img src="KV/TROPICAL 1.jpg" alt="Tropical 1"></div>
+        <div class="c-slide"><img src="KV/TROPICAL 2.jpg" alt="Tropical 2"></div>
+      </div>
+      <button class="c-arrow prev" onclick="carMove('trop',-1)" aria-label="anterior">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="c-arrow next" onclick="carMove('trop',1)" aria-label="siguiente">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <div class="c-dots" id="cd-trop">
+      <button class="c-dot on"  onclick="carGo('trop',0)"></button>
+      <button class="c-dot"     onclick="carGo('trop',1)"></button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════
+     PINK PARADISE
+══════════════════════════════ -->
+<section class="ps" id="ps-pink" data-bg="#be3f62">
+
+  <div class="glow" style="width:480px;height:480px;right:-6%;top:-12%;background:#ff7eb3;opacity:0;animation-delay:0s"></div>
+  <div class="glow" style="width:320px;height:320px;left:-4%;bottom:5%;background:#ff5533;opacity:0;animation-delay:0.25s"></div>
+  <div class="glow" style="width:260px;height:260px;left:20%;top:15%;background:#ff3355;opacity:0;animation-delay:0.1s"></div>
+
+  <div class="ps-label" id="lbl-pink">
+    <p class="ps-num">02</p>
+    <h2 class="ps-name">Pink Paradise</h2>
+    <p class="ps-sub">Frutilla &amp; Naranja</p>
+  </div>
+
+  <div class="carousel-outer" id="co-pink">
+    <div class="carousel" id="car-pink">
+      <div class="carousel-track" id="ct-pink">
+        <div class="c-slide"><img src="KV/PINK 1.jpg" alt="Pink Paradise 1"></div>
+        <div class="c-slide"><img src="KV/PINK 2.jpg" alt="Pink Paradise 2"></div>
+      </div>
+      <button class="c-arrow prev" onclick="carMove('pink',-1)" aria-label="anterior">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="c-arrow next" onclick="carMove('pink',1)" aria-label="siguiente">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <div class="c-dots" id="cd-pink">
+      <button class="c-dot on" onclick="carGo('pink',0)"></button>
+      <button class="c-dot"    onclick="carGo('pink',1)"></button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════
+     TINTO DE VERANO
+══════════════════════════════ -->
+<section class="ps" id="ps-verano" data-bg="#5e0e1b">
+
+  <div class="glow" style="width:460px;height:460px;left:-5%;top:-10%;background:#c0392b;opacity:0;animation-delay:0s"></div>
+  <div class="glow" style="width:340px;height:340px;right:-4%;bottom:8%;background:#ff7043;opacity:0;animation-delay:0.2s"></div>
+  <div class="glow" style="width:240px;height:240px;right:18%;top:18%;background:#5a9e42;opacity:0;animation-delay:0.1s"></div>
+
+  <div class="ps-label" id="lbl-verano">
+    <p class="ps-num">03</p>
+    <h2 class="ps-name">Tinto de Verano</h2>
+    <p class="ps-sub">Manzana &amp; Naranja</p>
+  </div>
+
+  <div class="carousel-outer" id="co-verano">
+    <div class="carousel" id="car-verano">
+      <div class="carousel-track" id="ct-verano">
+        <div class="c-slide"><img src="KV/VERANO 1.jpg" alt="Tinto de Verano 1"></div>
+        <div class="c-slide"><img src="KV/VERANO 2.jpg" alt="Tinto de Verano 2"></div>
+      </div>
+      <button class="c-arrow prev" onclick="carMove('verano',-1)" aria-label="anterior">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <button class="c-arrow next" onclick="carMove('verano',1)" aria-label="siguiente">
+        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <div class="c-dots" id="cd-verano">
+      <button class="c-dot on" onclick="carGo('verano',0)"></button>
+      <button class="c-dot"    onclick="carGo('verano',1)"></button>
+    </div>
+  </div>
+
+</section>
+
+<!-- ══════════════════════════════
+     FOOTER
+══════════════════════════════ -->
+<footer>
+  <img src="LOGO FRUTAL.png" class="ft-logo" alt="Frontera Frutal">
+  <div class="ft-divider"></div>
+  <p class="ft-claim">Sweet Vibes</p>
+  <p class="ft-copy">© 2026 — Frontera Frutal · Presentación Interna</p>
+</footer>
+
+<script>
+/* ══════════════════════════════════════
+   CURSOR
+══════════════════════════════════════ */
+const dot  = document.getElementById('cur-dot');
+const ring = document.getElementById('cur-ring');
+let mx=0, my=0, rx=0, ry=0;
+document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+(function raf() {
+  rx += (mx-rx)*0.11; ry += (my-ry)*0.11;
+  dot.style.cssText  += `left:${mx}px;top:${my}px;`;
+  ring.style.cssText += `left:${rx}px;top:${ry}px;`;
+  requestAnimationFrame(raf);
+})();
+
+/* ══════════════════════════════════════
+   BG COLOR MORPH ON SCROLL
+══════════════════════════════════════ */
+const bgEl = document.getElementById('bg-morph');
+const secs = [...document.querySelectorAll('[data-bg]')];
+
+function hexToRgb(h) {
+  const r = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(h);
+  return r ? [parseInt(r[1],16), parseInt(r[2],16), parseInt(r[3],16)] : [0,0,0];
+}
+function lerpColor(a, b, t) {
+  const [r1,g1,b1]=hexToRgb(a), [r2,g2,b2]=hexToRgb(b);
+  const lerp=(x,y)=>Math.round(x+(y-x)*t);
+  return `rgb(${lerp(r1,r2)},${lerp(g1,g2)},${lerp(b1,b2)})`;
+}
+
+function updateBg() {
+  const sy = window.scrollY;
+  for (let i = 0; i < secs.length - 1; i++) {
+    const a = secs[i], b = secs[i+1];
+    const at = a.offsetTop, bt = b.offsetTop;
+    if (sy >= at && sy < bt) {
+      bgEl.style.background = lerpColor(a.dataset.bg, b.dataset.bg, (sy-at)/(bt-at));
+      return;
+    }
+  }
+  const last = secs[secs.length-1];
+  if (sy >= last.offsetTop) bgEl.style.background = last.dataset.bg;
+  else bgEl.style.background = secs[0].dataset.bg;
+}
+
+/* ══════════════════════════════════════
+   INTERSECTION — label & carousel reveal
+══════════════════════════════════════ */
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.18 });
+
+document.querySelectorAll('.ps-label, .carousel-outer').forEach(el => io.observe(el));
+
+/* ══════════════════════════════════════
+   PARALLAX — blobs
+══════════════════════════════════════ */
+function updateParallax() {
+  document.querySelectorAll('.ps').forEach(sec => {
+    const rect = sec.getBoundingClientRect();
+    const offset = -rect.top;
+    sec.querySelectorAll('.glow').forEach((g, i) => {
+      const speed = i % 2 === 0 ? 0.18 : 0.12;
+      g.style.transform = `translateY(${offset * speed}px)`;
+    });
+  });
+}
+
+window.addEventListener('scroll', () => { updateBg(); updateParallax(); }, { passive: true });
+updateBg();
+
+/* ══════════════════════════════════════
+   CAROUSEL
+══════════════════════════════════════ */
+const carIdx  = { trop: 0, pink: 0, verano: 0 };
+const carLen  = { trop: 2, pink: 2, verano: 2 };
+
+function carMove(id, dir) {
+  carIdx[id] = (carIdx[id] + dir + carLen[id]) % carLen[id];
+  carApply(id);
+}
+function carGo(id, idx) {
+  carIdx[id] = idx;
+  carApply(id);
+}
+function carApply(id) {
+  const i = carIdx[id];
+  document.getElementById(`ct-${id}`).style.transform = `translateX(-${i*100}%)`;
+  document.querySelectorAll(`#cd-${id} .c-dot`).forEach((d,j) => d.classList.toggle('on', j===i));
+}
+
+/* auto-advance */
+['trop','pink','verano'].forEach(id => {
+  setInterval(() => carMove(id, 1), 4200 + Math.random()*800);
+});
+
+/* ══════════════════════════════════════
+   VIDEO FALLBACK
+══════════════════════════════════════ */
+const vid = document.getElementById('hero-vid');
+vid.addEventListener('error', () => {
+  document.getElementById('hero').style.background =
+    'linear-gradient(145deg, #0a0a14 0%, #121222 50%, #0a1428 100%)';
+  vid.style.display = 'none';
+});
+</script>
+</body>
+</html>
