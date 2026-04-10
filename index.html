@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Frontera Frutal — Sweet Vibes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Inter:wght@200;300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #080808;
+  font-family: 'Inter', sans-serif;
+  cursor: none;
+  overflow: hidden;
+  height: 100vh;
+}
+
+/* cursor */
+#cd { position:fixed; width:8px; height:8px; background:#fff; border-radius:50%; pointer-events:none; z-index:9999; transform:translate(-50%,-50%); mix-blend-mode:difference; }
+#cr { position:fixed; width:30px; height:30px; border:1px solid rgba(255,255,255,0.4); border-radius:50%; pointer-events:none; z-index:9998; transform:translate(-50%,-50%); mix-blend-mode:difference; }
+
+/* grain */
+#grain {
+  position:fixed; inset:-50%; width:200%; height:200%;
+  z-index:800; pointer-events:none; opacity:0.025;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size:200px 200px;
+  animation:grain .5s steps(1) infinite;
+}
+@keyframes grain {
+  0%  { transform:translate(0,0); }
+  25% { transform:translate(-1%,1%); }
+  50% { transform:translate(2%,-1%); }
+  75% { transform:translate(-1%,2%); }
+}
+
+/* video bg */
+#bg-vid {
+  position:fixed; inset:0;
+  width:100%; height:100%;
+  object-fit:cover;
+  z-index:0;
+}
+#bg-fallback {
+  position:fixed; inset:0;
+  background: linear-gradient(145deg, #0d0d1a 0%, #131328 50%, #0a1020 100%);
+  z-index:0;
+}
+
+/* overlay */
+.overlay {
+  position:fixed; inset:0;
+  background: linear-gradient(to bottom,
+    rgba(0,0,0,0.6) 0%,
+    rgba(0,0,0,0.3) 40%,
+    rgba(0,0,0,0.72) 100%);
+  z-index:1;
+}
+
+/* content */
+.content {
+  position:fixed; inset:0;
+  z-index:10;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  gap:0;
+}
+
+.eyebrow {
+  font-family:'Inter', sans-serif;
+  font-size:9px;
+  font-weight:300;
+  letter-spacing:0.6em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.28);
+  margin-bottom:36px;
+  animation: fade-up 1.2s cubic-bezier(0.16,1,0.3,1) forwards;
+  opacity:0;
+}
+
+.logo {
+  height: clamp(48px, 7vw, 96px);
+  width:auto;
+  filter:brightness(0) invert(1);
+  opacity:0;
+  animation:fade-up 1.2s 0.18s cubic-bezier(0.16,1,0.3,1) forwards;
+  margin-bottom:28px;
+}
+
+.claim {
+  font-family:'Cormorant Garamond', serif;
+  font-style:italic;
+  font-weight:300;
+  font-size: clamp(18px, 2.8vw, 36px);
+  letter-spacing:0.38em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.45);
+  opacity:0;
+  animation:fade-up 1.2s 0.32s cubic-bezier(0.16,1,0.3,1) forwards;
+  margin-bottom:56px;
+}
+
+/* CTA button */
+.cta {
+  display:inline-flex;
+  align-items:center;
+  gap:14px;
+  text-decoration:none;
+  padding:14px 36px;
+  border:1px solid rgba(255,255,255,0.22);
+  border-radius:100px;
+  background:rgba(255,255,255,0.06);
+  backdrop-filter:blur(16px);
+  -webkit-backdrop-filter:blur(16px);
+  opacity:0;
+  animation:fade-up 1.2s 0.5s cubic-bezier(0.16,1,0.3,1) forwards;
+  transition:background 0.28s, border-color 0.28s, transform 0.28s;
+  cursor:none;
+}
+.cta:hover {
+  background:rgba(255,255,255,0.14);
+  border-color:rgba(255,255,255,0.45);
+  transform:scale(1.03);
+}
+.cta-txt {
+  font-family:'Inter', sans-serif;
+  font-size:11px;
+  font-weight:300;
+  letter-spacing:0.42em;
+  text-transform:uppercase;
+  color:rgba(255,255,255,0.8);
+}
+.cta-arrow {
+  width:18px; height:18px;
+  stroke:rgba(255,255,255,0.65);
+  fill:none;
+  stroke-width:1.5;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  transition:transform 0.28s;
+}
+.cta:hover .cta-arrow { transform:translateX(4px); }
+
+/* corner label */
+.corner {
+  position:fixed;
+  bottom:36px; right:48px;
+  z-index:20;
+  font-family:'Cormorant Garamond', serif;
+  font-style:italic;
+  font-size:11px;
+  letter-spacing:0.2em;
+  color:rgba(255,255,255,0.2);
+  opacity:0;
+  animation:fade-up 1.2s 0.7s cubic-bezier(0.16,1,0.3,1) forwards;
+}
+
+@keyframes fade-up {
+  from { opacity:0; transform:translateY(16px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+</style>
+</head>
+<body>
+
+<div id="grain"></div>
+<div id="cd"></div>
+<div id="cr"></div>
+
+<div id="bg-fallback"></div>
+<video id="bg-vid" autoplay muted loop playsinline preload="auto">
+  <source src="VIDEO-frutal.mp4" type="video/mp4">
+</video>
+<div class="overlay"></div>
+
+<div class="content">
+  <p class="eyebrow">Frontera Frutal · 2026</p>
+  <img src="LOGO FRUTAL.png" class="logo" alt="Frontera Frutal">
+  <p class="claim">Sweet Vibes</p>
+  <a href="presentacion.html" class="cta">
+    <span class="cta-txt">Ver presentación</span>
+    <svg class="cta-arrow" viewBox="0 0 24 24">
+      <line x1="5" y1="12" x2="19" y2="12"/>
+      <polyline points="12 5 19 12 12 19"/>
+    </svg>
+  </a>
+</div>
+
+<p class="corner">Línea Frutal — Presentación Interna</p>
+
+<script>
+  const cd = document.getElementById('cd');
+  const cr = document.getElementById('cr');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  (function raf(){
+    rx+=(mx-rx)*0.11; ry+=(my-ry)*0.11;
+    cd.style.left=mx+'px'; cd.style.top=my+'px';
+    cr.style.left=rx+'px'; cr.style.top=ry+'px';
+    requestAnimationFrame(raf);
+  })();
+
+  const vid = document.getElementById('bg-vid');
+  vid.addEventListener('error', () => {
+    document.getElementById('bg-fallback').style.opacity='1';
+    vid.style.display='none';
+  });
+  vid.addEventListener('canplay', () => {
+    document.getElementById('bg-fallback').style.opacity='0';
+  });
+</script>
+</body>
+</html>
