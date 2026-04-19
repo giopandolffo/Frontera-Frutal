@@ -197,7 +197,7 @@ body {
 }
 
 /* ════════════════════════════════════════
-   CAROUSEL
+   IMAGEN PRODUCTO
 ════════════════════════════════════════ */
 .carousel-outer {
   position: relative;
@@ -216,22 +216,8 @@ body {
   transform: translateY(0);
 }
 
-.carousel {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  border-radius: 16px;
-}
-
-.carousel-track {
-  display: flex;
-  will-change: transform;
-  transition: transform 0.72s cubic-bezier(0.86, 0, 0.07, 1);
-}
-
 .c-slide {
-  flex: 0 0 100%;
-  position: relative;
+  width: 100%;
 }
 
 .c-slide img {
@@ -245,7 +231,7 @@ body {
   cursor: zoom-in;
   transition: transform 0.4s var(--ease-out-expo), filter 0.4s ease;
 }
-.c-slide img:hover { 
+.c-slide img:hover {
   transform: scale(1.02);
   filter: drop-shadow(0 25px 80px rgba(0,0,0,0.8));
 }
@@ -311,59 +297,6 @@ body {
   stroke-linecap: round;
 }
 
-/* arrow buttons */
-.c-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 20;
-  background: rgba(255,255,255,0.1);
-  border: 1px solid rgba(255,255,255,0.18);
-  color: white;
-  width: 46px; height: 46px;
-  border-radius: 50%;
-  cursor: none;
-  display: flex; align-items: center; justify-content: center;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  transition: background 0.22s, border-color 0.22s, transform 0.22s;
-  outline: none;
-}
-.c-arrow:hover {
-  background: rgba(255,255,255,0.22);
-  border-color: rgba(255,255,255,0.4);
-  transform: translateY(-50%) scale(1.06);
-}
-.c-arrow svg {
-  width: 15px; height: 15px;
-  stroke: rgba(255,255,255,0.85);
-  fill: none;
-  stroke-width: 2;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-.c-arrow.prev { left: -23px; }
-.c-arrow.next { right: -23px; }
-
-/* dots */
-.c-dots {
-  display: flex;
-  gap: 9px;
-  margin-top: 20px;
-}
-.c-dot {
-  width: 6px; height: 6px;
-  border-radius: 50%;
-  background: rgba(255,255,255,0.28);
-  border: none;
-  cursor: none;
-  padding: 0;
-  transition: background 0.3s, transform 0.3s;
-}
-.c-dot.on {
-  background: rgba(255,255,255,0.9);
-  transform: scale(1.4);
-}
 
 /* ════════════════════════════════════════
    FOOTER
