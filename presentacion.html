@@ -237,15 +237,18 @@ body {
 .c-slide img {
   width: 100%;
   height: auto;
-  max-height: 68vh;
+  max-height: 80vh;
   object-fit: contain;
   display: block;
-  border-radius: 16px;
-  filter: drop-shadow(0 20px 72px rgba(0,0,0,0.7));
+  border-radius: 12px;
+  filter: drop-shadow(0 20px 72px rgba(0,0,0,0.6));
   cursor: zoom-in;
-  transition: transform 0.22s var(--ease-out-expo);
+  transition: transform 0.4s var(--ease-out-expo), filter 0.4s ease;
 }
-.c-slide img:hover { transform: scale(1.015); }
+.c-slide img:hover { 
+  transform: scale(1.02);
+  filter: drop-shadow(0 25px 80px rgba(0,0,0,0.8));
+}
 
 /* ── LIGHTBOX ── */
 #lightbox {
@@ -268,16 +271,23 @@ body {
   pointer-events: all;
 }
 #lightbox img {
-  max-width: 90vw;
-  max-height: 90vh;
+  max-width: none;
+  max-height: none;
+  min-width: 120vw;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 4px;
   filter: drop-shadow(0 24px 80px rgba(0,0,0,0.8));
-  transform: scale(0.92);
-  transition: transform 0.35s cubic-bezier(0.16,1,0.3,1);
+  transform: scale(0.85);
+  opacity: 0;
+  transition: transform 0.5s var(--ease-out-expo), opacity 0.4s ease;
   cursor: zoom-out;
+  user-select: none;
+  -webkit-user-drag: none;
 }
-#lightbox.open img { transform: scale(1); }
+#lightbox.open img { 
+  transform: scale(1);
+  opacity: 1;
+}
 #lightbox-close {
   position: absolute;
   top: 28px; right: 36px;
@@ -417,21 +427,8 @@ footer {
   </div>
 
   <div class="carousel-outer" id="co-trop">
-    <div class="carousel" id="car-trop">
-      <div class="carousel-track" id="ct-trop">
-        <div class="c-slide"><img src="KV/TROPICAL 1.jpg" alt="Tropical 1"></div>
-        <div class="c-slide"><img src="KV/TROPICAL 2.jpg" alt="Tropical 2"></div>
-      </div>
-      <button class="c-arrow prev" onclick="carMove('trop',-1)" aria-label="anterior">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <button class="c-arrow next" onclick="carMove('trop',1)" aria-label="siguiente">
-        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-    <div class="c-dots" id="cd-trop">
-      <button class="c-dot on"  onclick="carGo('trop',0)"></button>
-      <button class="c-dot"     onclick="carGo('trop',1)"></button>
+    <div class="c-slide">
+      <img src="IMAGENES FINALES/KV-TROPICAL.jpg" alt="Tropical KV">
     </div>
   </div>
 
@@ -453,21 +450,8 @@ footer {
   </div>
 
   <div class="carousel-outer" id="co-pink">
-    <div class="carousel" id="car-pink">
-      <div class="carousel-track" id="ct-pink">
-        <div class="c-slide"><img src="KV/PINK 1.jpg" alt="Pink Paradise 1"></div>
-        <div class="c-slide"><img src="KV/PINK 2.jpg" alt="Pink Paradise 2"></div>
-      </div>
-      <button class="c-arrow prev" onclick="carMove('pink',-1)" aria-label="anterior">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <button class="c-arrow next" onclick="carMove('pink',1)" aria-label="siguiente">
-        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-    <div class="c-dots" id="cd-pink">
-      <button class="c-dot on" onclick="carGo('pink',0)"></button>
-      <button class="c-dot"    onclick="carGo('pink',1)"></button>
+    <div class="c-slide">
+      <img src="IMAGENES FINALES/KV-PINK.jpg" alt="Pink Paradise KV">
     </div>
   </div>
 
@@ -489,21 +473,8 @@ footer {
   </div>
 
   <div class="carousel-outer" id="co-verano">
-    <div class="carousel" id="car-verano">
-      <div class="carousel-track" id="ct-verano">
-        <div class="c-slide"><img src="KV/VERANO 1.jpg" alt="Tinto de Verano 1"></div>
-        <div class="c-slide"><img src="KV/VERANO 2.jpg" alt="Tinto de Verano 2"></div>
-      </div>
-      <button class="c-arrow prev" onclick="carMove('verano',-1)" aria-label="anterior">
-        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-      </button>
-      <button class="c-arrow next" onclick="carMove('verano',1)" aria-label="siguiente">
-        <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-      </button>
-    </div>
-    <div class="c-dots" id="cd-verano">
-      <button class="c-dot on" onclick="carGo('verano',0)"></button>
-      <button class="c-dot"    onclick="carGo('verano',1)"></button>
+    <div class="c-slide">
+      <img src="IMAGENES FINALES/KV-TINTO.jpg" alt="Tinto de Verano KV">
     </div>
   </div>
 
@@ -615,22 +586,7 @@ updateBg();
 /* ══════════════════════════════════════
    CAROUSEL
 ══════════════════════════════════════ */
-const carIdx  = { trop: 0, pink: 0, verano: 0 };
-const carLen  = { trop: 2, pink: 2, verano: 2 };
-
-function carMove(id, dir) {
-  carIdx[id] = (carIdx[id] + dir + carLen[id]) % carLen[id];
-  carApply(id);
-}
-function carGo(id, idx) {
-  carIdx[id] = idx;
-  carApply(id);
-}
-function carApply(id) {
-  const i = carIdx[id];
-  document.getElementById(`ct-${id}`).style.transform = `translateX(-${i*100}%)`;
-  document.querySelectorAll(`#cd-${id} .c-dot`).forEach((d,j) => d.classList.toggle('on', j===i));
-}
+/* CAROUSEL LOGIC REMOVED since images are now single */
 
 /* ══════════════════════════════════════
    LIGHTBOX
@@ -642,12 +598,29 @@ document.querySelectorAll('.c-slide img').forEach(img => {
   img.addEventListener('click', () => {
     lbImg.src = img.src;
     lb.classList.add('open');
+    // Start with a centered scale
+    lbImg.style.transform = 'scale(1) translate(0,0)';
   });
 });
 
-function closeLightbox() { lb.classList.remove('open'); }
+function closeLightbox() {
+  lb.classList.remove('open');
+}
+
+lb.addEventListener('mousemove', (e) => {
+  if (!lb.classList.contains('open')) return;
+  const { clientX: x, clientY: y } = e;
+  const { innerWidth: w, innerHeight: h } = window;
+  
+  // Pan the oversized image based on mouse position
+  const moveX = (x / w - 0.5) * -45;
+  const moveY = (y / h - 0.5) * -45;
+  
+  lbImg.style.transform = `scale(1) translate(${moveX}%, ${moveY}%)`;
+});
+
 document.getElementById('lightbox-close').addEventListener('click', closeLightbox);
-lb.addEventListener('click', e => { if (e.target === lb || e.target === lbImg) closeLightbox(); });
+lb.addEventListener('click', closeLightbox);
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 
 /* ══════════════════════════════════════
