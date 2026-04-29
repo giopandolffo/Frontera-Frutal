@@ -1,0 +1,1065 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Guion de Video — Cocktails Frontera Frutal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@1,700;1,900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:     #0A0808;
+      --surface: #111009;
+      --warm:    #F2EDE4;
+      --mid:     #7A7060;
+      --gold:    #C8963E;
+      --gold-dim: rgba(200,150,62,0.18);
+      --gold-line: rgba(200,150,62,0.22);
+      --spring:  cubic-bezier(0.16,1,0.3,1);
+
+      /* Product accents */
+      --pink:    #C73060;
+      --orange:  #D9621A;
+      --crimson: #B01818;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--ink);
+      color: var(--warm);
+      font-family: 'Outfit', sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════════════
+       SISTEMA DE ANIMACIÓN
+    ═══════════════════════════════════════ */
+
+    @keyframes coverUp   { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes coverZoom { from { opacity:0; transform:scale(0.9); }       to { opacity:1; transform:scale(1); } }
+    @keyframes coverIn   { from { opacity:0; } to { opacity:1; } }
+    @keyframes breathe   { 0%,100% { opacity:1; } 50% { opacity:.35; } }
+
+    [data-reveal] {
+      opacity: 0;
+      transition: opacity .75s var(--spring), transform .75s var(--spring);
+      transition-delay: var(--delay, 0ms);
+    }
+    [data-reveal="up"]    { transform: translateY(30px); }
+    [data-reveal="left"]  { transform: translateX(-26px); }
+    [data-reveal="scale"] { transform: scale(.94) translateY(12px); }
+    [data-reveal="fade"]  { transform: none; }
+    [data-reveal].visible { opacity:1; transform:none; }
+
+    [data-stagger] > * {
+      opacity: 0;
+      transform: translateY(16px) translateX(-5px);
+      transition: opacity .65s var(--spring), transform .65s var(--spring);
+      transition-delay: calc(var(--i,0)*56ms + var(--base,0ms));
+    }
+    [data-stagger].visible > * { opacity:1; transform:none; }
+
+    [data-timeline] > .tl-seg {
+      opacity: 0;
+      transform: scaleX(0);
+      transform-origin: left center;
+      transition: opacity .5s var(--spring), transform .6s var(--spring);
+      transition-delay: calc(var(--i,0)*68ms + 80ms);
+    }
+    [data-timeline].visible > .tl-seg { opacity:1; transform:scaleX(1); }
+
+    /* ── BARRA DE PROGRESO ── */
+    #prog { position:fixed; top:0; left:0; width:100%; height:2px; z-index:300; }
+    #prog-fill {
+      height:100%;
+      background: linear-gradient(90deg, var(--pink), var(--gold), var(--orange));
+      transform-origin: left;
+      transform: scaleX(0);
+    }
+
+    /* ══════════════════════════════════════
+       PORTADA
+    ══════════════════════════════════════ */
+    .cover {
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 64px 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* fondo radiante */
+    .cover::before {
+      content:'';
+      position:absolute; inset:0;
+      background:
+        radial-gradient(ellipse 55% 45% at 15% 55%, rgba(200,150,62,.13) 0%, transparent 65%),
+        radial-gradient(ellipse 55% 45% at 85% 45%, rgba(176,24,24,.12) 0%, transparent 65%),
+        radial-gradient(ellipse 40% 55% at 50% 85%, rgba(217,98,26,.10) 0%, transparent 65%);
+      pointer-events:none;
+    }
+
+    /* ruido de película */
+    .cover::after {
+      content:'';
+      position:absolute; inset:0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.04'/%3E%3C/svg%3E");
+      background-size:180px;
+      pointer-events:none;
+    }
+
+    .cover > * { position:relative; z-index:1; }
+
+    .cover-eyebrow {
+      font-family:'Space Mono',monospace;
+      font-size:10px; letter-spacing:.24em; text-transform:uppercase;
+      color:var(--mid); margin-bottom:40px;
+      animation: coverUp .8s var(--spring) .15s both;
+    }
+
+    .cover-logo {
+      width:260px; max-width:68vw; margin-bottom:28px;
+      animation: coverZoom 1s var(--spring) .35s both;
+    }
+
+    .cover-rule {
+      width:48px; height:1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto 24px;
+      animation: coverIn .8s ease .55s both;
+    }
+
+    .cover-sub {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(17px,2.8vw,26px); letter-spacing:.18em;
+      color:var(--mid); margin-bottom:56px;
+      animation: coverUp .8s var(--spring) .62s both;
+    }
+
+    .cover-meta {
+      display:flex; gap:44px; justify-content:center; flex-wrap:wrap;
+    }
+
+    .cover-meta-item {
+      text-align:center;
+      animation: coverUp .7s var(--spring) calc(.78s + var(--i,0)*.09s) both;
+    }
+    .cover-divider {
+      width:1px; height:44px;
+      background:rgba(200,150,62,.25); align-self:center;
+      animation: coverIn .5s ease calc(.83s + var(--i,0)*.09s) both;
+    }
+
+    .cover-meta-item .label {
+      font-family:'Space Mono',monospace;
+      font-size:9px; letter-spacing:.2em; text-transform:uppercase;
+      color:var(--mid); display:block; margin-bottom:5px;
+    }
+    .cover-meta-item .value { font-size:15px; font-weight:600; color:var(--warm); }
+
+    .cover-scroll {
+      position:absolute; bottom:36px; left:50%; transform:translateX(-50%);
+      font-family:'Space Mono',monospace; font-size:9px; letter-spacing:.2em;
+      color:var(--mid); text-transform:uppercase;
+      display:flex; flex-direction:column; align-items:center; gap:8px;
+      animation: coverIn 1s ease 1.9s both;
+    }
+    .cover-scroll::after {
+      content:''; width:1px; height:28px; background:var(--gold);
+      animation: breathe 1.8s ease-in-out infinite;
+    }
+
+    /* ══════════════════════════════════════
+       NAV
+    ══════════════════════════════════════ */
+    .nav {
+      position:sticky; top:2px; z-index:200;
+      background:rgba(10,8,8,.93);
+      backdrop-filter:blur(18px);
+      border-bottom:1px solid rgba(200,150,62,.15);
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 48px; height:54px;
+    }
+    .nav-logo { height:26px; width:auto; opacity:.88; transition:opacity .2s; }
+    .nav-logo:hover { opacity:1; }
+
+    .nav-links { display:flex; gap:28px; list-style:none; }
+    .nav-links a {
+      font-family:'Space Mono',monospace; font-size:9px;
+      letter-spacing:.15em; text-transform:uppercase;
+      color:var(--mid); text-decoration:none;
+      transition:color .2s; position:relative;
+    }
+    .nav-links a::after {
+      content:''; position:absolute; bottom:-2px; left:0;
+      width:0; height:1px; background:var(--gold);
+      transition:width .25s var(--spring);
+    }
+    .nav-links a:hover { color:var(--warm); }
+    .nav-links a:hover::after, .nav-links a.active::after { width:100%; }
+    .nav-links a.active { color:var(--gold); }
+
+    /* ══════════════════════════════════════
+       RESUMEN
+    ══════════════════════════════════════ */
+    .overview { padding:88px 48px; border-bottom:1px solid var(--gold-line); }
+
+    .section-label {
+      font-family:'Space Mono',monospace; font-size:9px;
+      letter-spacing:.25em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:24px;
+    }
+
+    .overview-title {
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(30px,4vw,50px); letter-spacing:.04em; line-height:1;
+      color:var(--warm);
+    }
+
+    .overview-desc {
+      max-width:580px; color:var(--mid);
+      font-size:14px; margin-top:20px; line-height:1.8;
+    }
+
+    .overview-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+      gap:1px; background:var(--gold-line);
+      border:1px solid var(--gold-line); margin-top:44px;
+    }
+    .overview-item {
+      background:var(--ink); padding:26px 28px;
+      transition:background .2s;
+    }
+    .overview-item:hover { background:rgba(200,150,62,.05); }
+    .overview-item .oi-label {
+      font-family:'Space Mono',monospace; font-size:9px;
+      letter-spacing:.2em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:7px;
+    }
+    .overview-item .oi-value { font-size:15px; font-weight:600; color:var(--warm); line-height:1.3; }
+
+    /* ══════════════════════════════════════
+       SECCIÓN DE VIDEO (FILM)
+    ══════════════════════════════════════ */
+    .film-section { padding:88px 0; border-bottom:1px solid var(--gold-line); }
+
+    /* KV image hero */
+    .film-kv-wrap {
+      position:relative; overflow:hidden;
+      height:clamp(260px,35vw,420px);
+      margin:0 0 0 0;
+    }
+    .film-kv-wrap img {
+      width:100%; height:100%;
+      object-fit:cover; object-position:center top;
+      display:block;
+      filter:brightness(.72) saturate(1.1);
+      transition:filter 1.2s ease, transform 6s ease;
+    }
+    .film-kv-wrap:hover img { filter:brightness(.85) saturate(1.15); transform:scale(1.02); }
+
+    /* gradient overlay on KV */
+    .film-kv-wrap::after {
+      content:''; position:absolute; inset:0;
+      background: linear-gradient(to bottom,
+        transparent 40%,
+        rgba(10,8,8,.7) 75%,
+        var(--ink) 100%);
+      pointer-events:none;
+    }
+
+    /* product name over KV */
+    .film-kv-label {
+      position:absolute; bottom:28px; left:48px; z-index:2;
+      font-family:'Bebas Neue',sans-serif;
+      font-size:clamp(36px,5vw,68px); letter-spacing:.05em; line-height:1;
+    }
+
+    .film-header {
+      padding:40px 48px 48px;
+      display:grid;
+      grid-template-columns:1fr auto;
+      gap:32px; align-items:end;
+    }
+
+    .film-pill {
+      display:inline-flex; align-items:center; gap:8px;
+      padding:5px 13px; border-radius:2px;
+      font-family:'Space Mono',monospace; font-size:9px;
+      letter-spacing:.15em; text-transform:uppercase;
+      margin-bottom:14px;
+    }
+    .film-pill .dot {
+      width:5px; height:5px; border-radius:50%;
+      animation: breathe 2.4s ease-in-out infinite;
+    }
+
+    .film-meta { display:flex; gap:8px; margin-top:14px; flex-wrap:wrap; }
+    .film-tag {
+      font-family:'Space Mono',monospace; font-size:9px;
+      letter-spacing:.13em; text-transform:uppercase;
+      color:var(--mid); padding:5px 11px;
+      border:1px solid rgba(255,255,255,.1); border-radius:2px;
+      transition:border-color .2s, color .2s;
+    }
+    .film-tag:hover { color:var(--warm); border-color:var(--gold-line); }
+
+    .film-ingredients { text-align:right; }
+    .film-ingredients .fi-label {
+      font-family:'Space Mono',monospace; font-size:9px;
+      letter-spacing:.2em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:12px;
+    }
+    .film-ingredients ul { list-style:none; }
+    .film-ingredients li { font-size:13px; color:var(--warm); padding:2.5px 0; opacity:.75; }
+
+    /* ══════════════════════════════════════
+       TIMELINE
+    ══════════════════════════════════════ */
+    .timeline { padding:0 48px 0; display:flex; gap:2px; height:44px; }
+    .tl-seg {
+      display:flex; align-items:center; justify-content:center; flex:1;
+      font-family:'Space Mono',monospace; font-size:9px;
+      letter-spacing:.08em; color:rgba(242,237,228,.35);
+      border-radius:2px; transition:filter .2s;
+    }
+    .tl-seg:hover { filter:brightness(1.5); }
+
+    /* ══════════════════════════════════════
+       SHOTS TABLE
+    ══════════════════════════════════════ */
+    .shots-wrapper { padding:20px 48px 0; }
+    .shots-grid { display:grid; gap:2px; }
+
+    .shot-row {
+      display:grid;
+      grid-template-columns: 52px 76px 1fr 138px 210px;
+      background:rgba(242,237,228,.025);
+      border:1px solid rgba(200,150,62,.09);
+      transition:background .2s, border-color .2s;
+    }
+    .shot-row:hover {
+      background:rgba(200,150,62,.06);
+      border-color:rgba(200,150,62,.2);
+    }
+    .shot-row.hdr {
+      background:transparent; border:none;
+      border-bottom:1px solid rgba(200,150,62,.2);
+      margin-bottom:4px;
+    }
+    .shot-row.hdr .sc {
+      font-family:'Space Mono',monospace; font-size:9px;
+      letter-spacing:.2em; text-transform:uppercase;
+      color:var(--mid); padding:0 14px 10px;
+    }
+
+    .sc {
+      padding:19px 14px;
+      border-right:1px solid rgba(200,150,62,.07);
+      display:flex; flex-direction:column; justify-content:center;
+    }
+    .sc:last-child { border-right:none; }
+
+    .shot-num {
+      font-family:'Bebas Neue',sans-serif; font-size:26px;
+      line-height:1; opacity:.2; transition:opacity .2s;
+    }
+    .shot-row:hover .shot-num { opacity:.55; }
+
+    .shot-tc {
+      font-family:'Space Mono',monospace; font-size:11px;
+      letter-spacing:.09em; color:var(--mid);
+    }
+
+    .shot-desc { font-size:13px; line-height:1.55; color:var(--warm); }
+    .shot-desc strong {
+      display:block; font-size:9px;
+      font-family:'Space Mono',monospace; letter-spacing:.12em;
+      text-transform:uppercase; margin-bottom:4px; opacity:.42;
+    }
+
+    .shot-cam { font-size:12px; color:var(--mid); line-height:1.5; }
+
+    /* ★ TEXT OVERLAY — Bold Italic Playfair ★ */
+    .shot-overlay {
+      font-family:'Playfair Display',serif;
+      font-style:italic; font-weight:700;
+      font-size:12px; line-height:1.55;
+      color:var(--warm); letter-spacing:.01em;
+    }
+
+    /* ══════════════════════════════════════
+       TEMAS POR PRODUCTO
+    ══════════════════════════════════════ */
+    .theme-pink .film-pill  { background:rgba(199,48,96,.14); color:var(--pink); border:1px solid rgba(199,48,96,.28); }
+    .theme-pink .film-pill .dot { background:var(--pink); }
+    .theme-pink .film-kv-label { color:var(--pink); }
+    .theme-pink .tl-seg     { background:rgba(199,48,96,.12); }
+    .theme-pink .shot-num   { color:#F7C5D5; }
+
+    .theme-tropical .film-pill { background:rgba(217,98,26,.14); color:var(--orange); border:1px solid rgba(217,98,26,.28); }
+    .theme-tropical .film-pill .dot { background:var(--orange); }
+    .theme-tropical .film-kv-label { color:var(--orange); }
+    .theme-tropical .tl-seg    { background:rgba(217,98,26,.12); }
+    .theme-tropical .shot-num  { color:#FFD9B0; }
+
+    .theme-red .film-pill  { background:rgba(176,24,24,.14); color:#E53935; border:1px solid rgba(176,24,24,.28); }
+    .theme-red .film-pill .dot { background:#E53935; }
+    .theme-red .film-kv-label { color:#E53935; }
+    .theme-red .tl-seg     { background:rgba(176,24,24,.12); }
+    .theme-red .shot-num   { color:#F0C0C0; }
+
+    /* ══════════════════════════════════════
+       NOTAS DE ESTILO
+    ══════════════════════════════════════ */
+    .style-notes { padding:88px 48px; border-bottom:1px solid var(--gold-line); }
+
+    .notes-grid {
+      display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:2px; margin-top:40px;
+    }
+    .note-card {
+      background:rgba(242,237,228,.025);
+      border:1px solid rgba(200,150,62,.1);
+      padding:26px; transition:background .25s, border-color .25s, transform .3s var(--spring);
+    }
+    .note-card:hover {
+      background:rgba(200,150,62,.05);
+      border-color:rgba(200,150,62,.22);
+      transform:translateY(-3px);
+    }
+    .nc-label {
+      font-family:'Space Mono',monospace; font-size:9px;
+      letter-spacing:.2em; text-transform:uppercase;
+      color:var(--gold); margin-bottom:10px;
+    }
+    .nc-title {
+      font-family:'Bebas Neue',sans-serif; font-size:22px;
+      letter-spacing:.06em; color:var(--warm); margin-bottom:10px;
+    }
+    .nc-body { font-size:13px; color:var(--mid); line-height:1.7; }
+
+    /* ══════════════════════════════════════
+       ESPECIFICACIONES
+    ══════════════════════════════════════ */
+    .tech-specs { padding:88px 48px; border-bottom:1px solid var(--gold-line); }
+
+    .spec-wrap { margin-top:40px; max-width:680px; }
+    .spec-row {
+      display:flex; justify-content:space-between; align-items:baseline;
+      padding:15px 0; border-bottom:1px solid rgba(200,150,62,.1); gap:20px;
+      transition:border-color .2s;
+    }
+    .spec-row:hover { border-color:rgba(200,150,62,.25); }
+    .spec-row:last-child { border-bottom:none; }
+    .spec-key {
+      font-family:'Space Mono',monospace; font-size:10px;
+      letter-spacing:.14em; text-transform:uppercase; color:var(--mid); min-width:190px;
+    }
+    .spec-val { font-size:14px; font-weight:500; color:var(--warm); text-align:right; }
+
+    /* ══════════════════════════════════════
+       FOOTER
+    ══════════════════════════════════════ */
+    footer {
+      padding:48px; display:flex;
+      justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;
+    }
+    .footer-logo { height:22px; width:auto; opacity:.22; transition:opacity .3s; }
+    footer:hover .footer-logo { opacity:.42; }
+    .footer-note {
+      font-family:'Space Mono',monospace; font-size:9px;
+      letter-spacing:.14em; text-transform:uppercase;
+      color:rgba(242,237,228,.18);
+    }
+
+    /* ══════════════════════════════════════
+       RESPONSIVE
+    ══════════════════════════════════════ */
+    @media (max-width:900px) {
+      .nav { padding:0 20px; }
+      .nav-links { display:none; }
+      .overview, .style-notes, .tech-specs { padding:60px 20px; }
+      .film-kv-label { left:20px; font-size:clamp(28px,8vw,48px); }
+      .film-header { padding:28px 20px 40px; grid-template-columns:1fr; }
+      .film-ingredients { text-align:left; display:none; }
+      .timeline { padding:0 20px; }
+      .shots-wrapper { padding:16px 20px 0; }
+      .shot-row { grid-template-columns:44px 68px 1fr; }
+      .sc:nth-child(4), .sc:nth-child(5) { display:none; }
+      footer { padding:36px 20px; }
+      .cover-meta { gap:20px; }
+      .notes-grid { grid-template-columns:1fr; }
+    }
+
+    @media (max-width:480px) {
+      .shot-row { grid-template-columns:38px 1fr; }
+      .sc:nth-child(2) { display:none; }
+      .film-kv-wrap { height:220px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="prog"><div id="prog-fill"></div></div>
+
+<!-- ══════════════════════════════════════════
+     PORTADA
+══════════════════════════════════════════ -->
+<section class="cover">
+  <p class="cover-eyebrow">Confidencial · Brief Creativo · Abril 2026</p>
+  <img class="cover-logo" src="../LOGO FRUTAL.png" alt="Frontera Frutal" />
+  <div class="cover-rule"></div>
+  <p class="cover-sub">Guion de Video — Serie Cocktails</p>
+  <div class="cover-meta">
+    <div class="cover-meta-item" style="--i:0"><span class="label">Videos</span><span class="value">3 Piezas</span></div>
+    <div class="cover-divider" style="--i:1"></div>
+    <div class="cover-meta-item" style="--i:2"><span class="label">Duración</span><span class="value">12 seg. c/u</span></div>
+    <div class="cover-divider" style="--i:3"></div>
+    <div class="cover-meta-item" style="--i:4"><span class="label">Formato</span><span class="value">4:5 · 9:16</span></div>
+    <div class="cover-divider" style="--i:5"></div>
+    <div class="cover-meta-item" style="--i:6"><span class="label">Estilo</span><span class="value">Ballantine's</span></div>
+    <div class="cover-divider" style="--i:7"></div>
+    <div class="cover-meta-item" style="--i:8"><span class="label">Producción</span><span class="value">IA Generativa</span></div>
+  </div>
+  <div class="cover-scroll">Desplazar</div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     NAV
+══════════════════════════════════════════ -->
+<nav class="nav">
+  <img class="nav-logo" src="../LOGO FRUTAL.png" alt="Frontera Frutal" />
+  <ul class="nav-links">
+    <li><a href="#overview">Resumen</a></li>
+    <li><a href="#sour">Sour Paradise</a></li>
+    <li><a href="#tropical">Tropical Highball</a></li>
+    <li><a href="#negroni">Summer Negroni</a></li>
+    <li><a href="#style">Dirección Visual</a></li>
+    <li><a href="#tech">Especificaciones</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════════════════════════════
+     RESUMEN
+══════════════════════════════════════════ -->
+<section class="overview" id="overview">
+  <p class="section-label" data-reveal="left">Resumen del Proyecto</p>
+  <h2 class="overview-title" data-reveal="up" style="--delay:80ms">Tres Cocktails.<br>Doce Segundos Cada Uno.</h2>
+  <p class="overview-desc" data-reveal="up" style="--delay:160ms">
+    Videos de recetas con cortes dinámicos y texto sobre impresión en cursiva bold, en el estilo visual Ballantine's — cinematográfico, oscuro y premium. Cada pieza presenta un producto Frontera Frutal a través de su cocktail, con pantalla dividida horizontal para ingredientes y un plano héroe final de producto.
+  </p>
+  <div class="overview-grid" data-stagger style="--base:200ms">
+    <div class="overview-item"><p class="oi-label">Video 01</p><p class="oi-value">Sour Paradise</p></div>
+    <div class="overview-item"><p class="oi-label">Producto</p><p class="oi-value">Frontera Pink Paradise</p></div>
+    <div class="overview-item"><p class="oi-label">Video 02</p><p class="oi-value">Tropical Highball</p></div>
+    <div class="overview-item"><p class="oi-label">Producto</p><p class="oi-value">Frontera Tropical</p></div>
+    <div class="overview-item"><p class="oi-label">Video 03</p><p class="oi-value">Summer Negroni</p></div>
+    <div class="overview-item"><p class="oi-label">Producto</p><p class="oi-value">Frontera Summer Red</p></div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     VIDEO 01 — SOUR PARADISE
+══════════════════════════════════════════ -->
+<section class="film-section theme-pink" id="sour">
+
+  <!-- Foto KV Pink -->
+  <div class="film-kv-wrap" data-reveal="fade">
+    <img src="img/kv-pink.jpg" alt="Frontera Pink Paradise" loading="lazy" />
+    <span class="film-kv-label">Sour Paradise</span>
+  </div>
+
+  <div class="film-header">
+    <div>
+      <div class="film-pill" data-reveal="left"><span class="dot"></span> Video 01 de 03</div>
+      <div class="film-meta" data-stagger style="--base:80ms">
+        <span class="film-tag">12 segundos</span>
+        <span class="film-tag">8 tomas</span>
+        <span class="film-tag">Pink Paradise</span>
+        <span class="film-tag">Split Horizontal</span>
+      </div>
+    </div>
+    <div class="film-ingredients" data-reveal="fade" style="--delay:160ms">
+      <p class="fi-label">Ingredientes</p>
+      <ul>
+        <li>90 ml Frontera Pink Paradise</li>
+        <li>2 frutillas</li>
+        <li>3 hojas de menta</li>
+        <li>15 ml jarabe simple</li>
+        <li>30 ml jugo de lima</li>
+        <li>1 cdta. albumina</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="timeline" data-timeline>
+    <div class="tl-seg" style="flex:1">0s</div>
+    <div class="tl-seg" style="flex:1.5">1s</div>
+    <div class="tl-seg" style="flex:1.5">2.5s</div>
+    <div class="tl-seg" style="flex:1.5">4s</div>
+    <div class="tl-seg" style="flex:1.5">5.5s</div>
+    <div class="tl-seg" style="flex:1.5">7s</div>
+    <div class="tl-seg" style="flex:1.5">8.5s</div>
+    <div class="tl-seg" style="flex:2">10s</div>
+  </div>
+
+  <div class="shots-wrapper">
+    <div class="shots-grid" data-stagger style="--base:60ms">
+
+      <div class="shot-row hdr">
+        <div class="sc">#</div>
+        <div class="sc">Tiempo</div>
+        <div class="sc">Descripción de la Toma</div>
+        <div class="sc">Cámara</div>
+        <div class="sc">Texto sobre Impresión</div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">01</span></div>
+        <div class="sc"><span class="shot-tc">0 – 1s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Plano Título</strong>Fondo negro. El nombre del cocktail aparece al centro con entrada limpia y directa. Corte editorial.</span></div>
+        <div class="sc"><span class="shot-cam">Estático · Centro</span></div>
+        <div class="sc"><span class="shot-overlay">Sour Paradise</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">02</span></div>
+        <div class="sc"><span class="shot-tc">1 – 2.5s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Plano Héroe del Producto</strong>Botella Pink Paradise centrada sobre fondo rosa oscuro. Splash de líquido rosado erupciona hacia arriba. Frutillas y cubos de hielo suspendidos en el aire.</span></div>
+        <div class="sc"><span class="shot-cam">Primer plano frontal · Avance rápido</span></div>
+        <div class="sc"><span class="shot-overlay">Frontera Frutal<br>Pink Paradise</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">03</span></div>
+        <div class="sc"><span class="shot-tc">2.5 – 4s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Split Horizontal — Ingredientes I</strong>Panel superior: frutillas frescas y hojas de menta cayendo en cámara lenta sobre fondo rosa. Panel inferior: botella estática con label visible. Línea horizontal de corte definida.</span></div>
+        <div class="sc"><span class="shot-cam">Doble ángulo · División 50/50 top-bottom</span></div>
+        <div class="sc"><span class="shot-overlay">2 Strawberries<br>3 Mint Leaves</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">04</span></div>
+        <div class="sc"><span class="shot-tc">4 – 5.5s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Split Horizontal — Ingredientes II</strong>Panel superior: lima exprimiéndose en macro, spray de jugo visible. Panel inferior: jarabe cayendo sobre hielo en la coctelera. El texto de cantidades aparece por palabra.</span></div>
+        <div class="sc"><span class="shot-cam">Cenital (sup) · Lateral (inf) · División H</span></div>
+        <div class="sc"><span class="shot-overlay">30ml Lime Juice<br>15ml Syrup</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">05</span></div>
+        <div class="sc"><span class="shot-tc">5.5 – 7s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Acción de Shakeo</strong>Manos sujetando la coctelera desde ángulo bajo. Movimiento vigoroso con desenfoque de movimiento. Energía cinética y ritmo marcado al corte.</span></div>
+        <div class="sc"><span class="shot-cam">POV bajo · Desenfoque de movimiento</span></div>
+        <div class="sc"><span class="shot-overlay">Shake 15 sec<br>1 tsp Albumin</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">06</span></div>
+        <div class="sc"><span class="shot-tc">7 – 8.5s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Colado Doble</strong>Líquido rosado pálido fluyendo a través del colador fino hacia la copa martini. Toma cenital en macro. Espuma formándose sobre la superficie.</span></div>
+        <div class="sc"><span class="shot-cam">Cenital macro · Estático</span></div>
+        <div class="sc"><span class="shot-overlay">Double Strain</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">07</span></div>
+        <div class="sc"><span class="shot-tc">8.5 – 10s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Decoración</strong>Ramita de menta y rodaja de frutilla caen en cámara lenta sobre la espuma. Pausa visual dentro del ritmo — contraste suave antes del cierre.</span></div>
+        <div class="sc"><span class="shot-cam">Lateral · Cámara lenta</span></div>
+        <div class="sc"><span class="shot-overlay">Garnish</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">08</span></div>
+        <div class="sc"><span class="shot-tc">10 – 12s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Plano Final Héroe</strong>Copa martini y botella Pink Paradise juntas sobre superficie rosa oscura. Condensación en el vidrio. Composición premium con logo al centro inferior.</span></div>
+        <div class="sc"><span class="shot-cam">Plano amplio · Estático · Héroe</span></div>
+        <div class="sc"><span class="shot-overlay">Sour Paradise<br>— Frontera Frutal —</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     VIDEO 02 — TROPICAL HIGHBALL
+══════════════════════════════════════════ -->
+<section class="film-section theme-tropical" id="tropical">
+
+  <div class="film-kv-wrap" data-reveal="fade">
+    <img src="img/kv-tropical.jpg" alt="Frontera Tropical" loading="lazy" />
+    <span class="film-kv-label">Tropical Highball</span>
+  </div>
+
+  <div class="film-header">
+    <div>
+      <div class="film-pill" data-reveal="left"><span class="dot"></span> Video 02 de 03</div>
+      <div class="film-meta" data-stagger style="--base:80ms">
+        <span class="film-tag">12 segundos</span>
+        <span class="film-tag">8 tomas</span>
+        <span class="film-tag">Tropical</span>
+        <span class="film-tag">Split Horizontal</span>
+      </div>
+    </div>
+    <div class="film-ingredients" data-reveal="fade" style="--delay:160ms">
+      <p class="fi-label">Ingredientes</p>
+      <ul>
+        <li>90 ml Frontera Tropical</li>
+        <li>45 ml cordial de té mango y maracuyá</li>
+        <li>50 ml agua con gas</li>
+        <li>Hielo · Decoración: rodaja de mango</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="timeline" data-timeline>
+    <div class="tl-seg" style="flex:1">0s</div>
+    <div class="tl-seg" style="flex:1.5">1s</div>
+    <div class="tl-seg" style="flex:1.5">2.5s</div>
+    <div class="tl-seg" style="flex:1.5">4s</div>
+    <div class="tl-seg" style="flex:1.5">5.5s</div>
+    <div class="tl-seg" style="flex:1">7s</div>
+    <div class="tl-seg" style="flex:1.5">8s</div>
+    <div class="tl-seg" style="flex:2">10s</div>
+  </div>
+
+  <div class="shots-wrapper">
+    <div class="shots-grid" data-stagger style="--base:60ms">
+
+      <div class="shot-row hdr">
+        <div class="sc">#</div>
+        <div class="sc">Tiempo</div>
+        <div class="sc">Descripción de la Toma</div>
+        <div class="sc">Cámara</div>
+        <div class="sc">Texto sobre Impresión</div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">01</span></div>
+        <div class="sc"><span class="shot-tc">0 – 1s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Plano Título</strong>Fondo naranja oscuro / ámbar. Nombre del cocktail aparece al centro. Lenguaje visual consistente de la serie.</span></div>
+        <div class="sc"><span class="shot-cam">Estático · Centro</span></div>
+        <div class="sc"><span class="shot-overlay">Tropical Highball</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">02</span></div>
+        <div class="sc"><span class="shot-tc">1 – 2.5s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Plano Héroe del Producto</strong>Botella Tropical sobre fondo naranja cálido. Explosión de mango y maracuyá hacia afuera. Splash de líquido en tonos dorados y ámbar.</span></div>
+        <div class="sc"><span class="shot-cam">Primer plano frontal · Avance rápido</span></div>
+        <div class="sc"><span class="shot-overlay">Frontera Frutal<br>Tropical</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">03</span></div>
+        <div class="sc"><span class="shot-tc">2.5 – 4s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Split Horizontal — Vertido del Vino</strong>Panel superior: vino Tropical vertiéndose sobre hielo en vaso alto — hilo dorado y brillante. Panel inferior: botella estática con label visible. Línea horizontal de corte definida.</span></div>
+        <div class="sc"><span class="shot-cam">Lateral (sup) · Frontal (inf) · División H</span></div>
+        <div class="sc"><span class="shot-overlay">90ml Frontera Tropical</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">04</span></div>
+        <div class="sc"><span class="shot-tc">4 – 5.5s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Split Horizontal — Cordial</strong>Panel superior: cordial de té ámbar cayendo en cascada con contraluz — el líquido brilla. Panel inferior: efecto de capas visible acumulándose sobre el vino dorado.</span></div>
+        <div class="sc"><span class="shot-cam">Macro contraluz (sup) · Lateral (inf) · División H</span></div>
+        <div class="sc"><span class="shot-overlay">45ml Mango &<br>Passion Fruit Cordial</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">05</span></div>
+        <div class="sc"><span class="shot-tc">5.5 – 7s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Explosión de Burbujas</strong>Toma cenital: agua con gas vertida desde arriba — burbujas estallan en la superficie en detalle macro. Efervescencia llena el encuadre.</span></div>
+        <div class="sc"><span class="shot-cam">Cenital macro · Avance</span></div>
+        <div class="sc"><span class="shot-overlay">50ml Sparkling Water</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">06</span></div>
+        <div class="sc"><span class="shot-tc">7 – 8s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Revolver Suave</strong>Cuchara de bar girando dentro de la bebida naranja — movimiento circular suave. Remolino translúcido dorado visible a través del vidrio.</span></div>
+        <div class="sc"><span class="shot-cam">Lateral · Primer plano</span></div>
+        <div class="sc"><span class="shot-overlay">Stir Gently</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">07</span></div>
+        <div class="sc"><span class="shot-tc">8 – 10s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Decoración de Mango</strong>Rodaja de mango fresco apoyándose sobre el borde del vaso en cámara lenta. Pausa visual breve antes del corte final.</span></div>
+        <div class="sc"><span class="shot-cam">Lateral · Cámara lenta</span></div>
+        <div class="sc"><span class="shot-overlay">Garnish with Mango</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">08</span></div>
+        <div class="sc"><span class="shot-tc">10 – 12s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Plano Final Héroe</strong>Vaso alto con decoración de mango y botella Tropical sobre superficie naranja cálida. Contraluz para efecto de brillo. Logo Frontera al centro inferior.</span></div>
+        <div class="sc"><span class="shot-cam">Plano amplio · Estático · Héroe</span></div>
+        <div class="sc"><span class="shot-overlay">Tropical Highball<br>— Frontera Frutal —</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     VIDEO 03 — SUMMER NEGRONI
+══════════════════════════════════════════ -->
+<section class="film-section theme-red" id="negroni">
+
+  <div class="film-kv-wrap" data-reveal="fade">
+    <img src="img/kv-tinto.jpg" alt="Frontera Summer Red" loading="lazy" />
+    <span class="film-kv-label">Summer Negroni</span>
+  </div>
+
+  <div class="film-header">
+    <div>
+      <div class="film-pill" data-reveal="left"><span class="dot"></span> Video 03 de 03</div>
+      <div class="film-meta" data-stagger style="--base:80ms">
+        <span class="film-tag">12 segundos</span>
+        <span class="film-tag">8 tomas</span>
+        <span class="film-tag">Summer Red</span>
+        <span class="film-tag">Split Horizontal</span>
+      </div>
+    </div>
+    <div class="film-ingredients" data-reveal="fade" style="--delay:160ms">
+      <p class="fi-label">Ingredientes</p>
+      <ul>
+        <li>50 ml Frontera Summer Red</li>
+        <li>50 ml vermut rojo</li>
+        <li>15 ml jugo de lima</li>
+        <li>20 ml granadina</li>
+        <li>Agua con gas</li>
+        <li>Rodaja de naranja o naranja deshidratada</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="timeline" data-timeline>
+    <div class="tl-seg" style="flex:1">0s</div>
+    <div class="tl-seg" style="flex:1.5">1s</div>
+    <div class="tl-seg" style="flex:1.5">2.5s</div>
+    <div class="tl-seg" style="flex:1.5">4s</div>
+    <div class="tl-seg" style="flex:1.5">5.5s</div>
+    <div class="tl-seg" style="flex:1.5">7s</div>
+    <div class="tl-seg" style="flex:1.5">8.5s</div>
+    <div class="tl-seg" style="flex:2">10s</div>
+  </div>
+
+  <div class="shots-wrapper">
+    <div class="shots-grid" data-stagger style="--base:60ms">
+
+      <div class="shot-row hdr">
+        <div class="sc">#</div>
+        <div class="sc">Tiempo</div>
+        <div class="sc">Descripción de la Toma</div>
+        <div class="sc">Cámara</div>
+        <div class="sc">Texto sobre Impresión</div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">01</span></div>
+        <div class="sc"><span class="shot-tc">0 – 1s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Plano Título</strong>Fondo rojo profundo / carmesí. Nombre del cocktail aparece al centro con el mismo tratamiento editorial de la serie.</span></div>
+        <div class="sc"><span class="shot-cam">Estático · Centro</span></div>
+        <div class="sc"><span class="shot-overlay">Summer Negroni</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">02</span></div>
+        <div class="sc"><span class="shot-tc">1 – 2.5s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Plano Héroe del Producto</strong>Botella Summer Red sobre fondo rojo oscuro. Líquido carmesí intenso erupciona hacia arriba. Rodajas de manzana y naranja salen disparadas — dramático y profundo.</span></div>
+        <div class="sc"><span class="shot-cam">Primer plano frontal · Avance rápido</span></div>
+        <div class="sc"><span class="shot-overlay">Frontera Frutal<br>Summer Red</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">03</span></div>
+        <div class="sc"><span class="shot-tc">2.5 – 4s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Split Horizontal — Bases</strong>Panel superior: rodaja de naranja sobre superficie roja oscura. Panel inferior: botella Summer Red junto a botella de vermut rojo. Ambas cantidades aparecen simultáneamente.</span></div>
+        <div class="sc"><span class="shot-cam">Macro (sup) · Frontal (inf) · División H</span></div>
+        <div class="sc"><span class="shot-overlay">50ml Summer Red<br>50ml Red Vermouth</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">04</span></div>
+        <div class="sc"><span class="shot-tc">4 – 5.5s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Split Horizontal — Granadina y Lima</strong>Panel superior: granadina cayendo en arco lento — color rubí profundo. Panel inferior: spray macro de jugo de lima sobre hielo. Rojo intenso acumulándose en el vaso.</span></div>
+        <div class="sc"><span class="shot-cam">Cenital (sup) · Macro (inf) · División H</span></div>
+        <div class="sc"><span class="shot-overlay">20ml Grenadine<br>15ml Lime Juice</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">05</span></div>
+        <div class="sc"><span class="shot-tc">5.5 – 7s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Revolver</strong>La cámara rota levemente con el movimiento de la cuchara — remolino de líquido rojo oscuro captando la luz. La bebida se ve profunda y densa.</span></div>
+        <div class="sc"><span class="shot-cam">Toma de seguimiento · Rotación</span></div>
+        <div class="sc"><span class="shot-overlay">Stir to Combine</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">06</span></div>
+        <div class="sc"><span class="shot-tc">7 – 8.5s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Remate con Agua con Gas</strong>Agua con gas vertida desde arriba — burbujas irrumpen en el rojo oscuro. Contraste dramático entre el líquido transparente y el fondo carmesí profundo.</span></div>
+        <div class="sc"><span class="shot-cam">Macro frontal · Avance</span></div>
+        <div class="sc"><span class="shot-overlay">Top with Sparkling Water</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">07</span></div>
+        <div class="sc"><span class="shot-tc">8.5 – 10s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Decoración de Naranja</strong>Rueda de naranja deshidratada o rodaja fresca cayendo en cámara lenta sobre la superficie oscura. Pausa suave antes del cierre.</span></div>
+        <div class="sc"><span class="shot-cam">Lateral · Cámara lenta</span></div>
+        <div class="sc"><span class="shot-overlay">Garnish</span></div>
+      </div>
+
+      <div class="shot-row">
+        <div class="sc"><span class="shot-num">08</span></div>
+        <div class="sc"><span class="shot-tc">10 – 12s</span></div>
+        <div class="sc"><span class="shot-desc"><strong>Plano Final Héroe</strong>Vaso ancho con hielo, cocktail rojo profundo y decoración de naranja junto a la botella Summer Red. Superficie roja oscura. Logo Frontera al centro inferior.</span></div>
+        <div class="sc"><span class="shot-cam">Plano amplio · Estático · Héroe</span></div>
+        <div class="sc"><span class="shot-overlay">Summer Negroni<br>— Frontera Frutal —</span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     DIRECCIÓN VISUAL
+══════════════════════════════════════════ -->
+<section class="style-notes" id="style">
+  <p class="section-label" data-reveal="left">Dirección Visual</p>
+  <h2 class="overview-title" data-reveal="up" style="--delay:80ms">Notas de Estilo</h2>
+
+  <div class="notes-grid" data-stagger style="--base:140ms">
+    <div class="note-card">
+      <p class="nc-label">Ritmo de Edición</p>
+      <p class="nc-title">Estilo Ballantine's</p>
+      <p class="nc-body">Cortes que acompañan el ritmo musical — cinematográficos, oscuros y atmosféricos. Sin disolvencias entre tomas de acción. La toma de decoración (07) ofrece un instante de cámara lenta que respira antes del plano final.</p>
+    </div>
+    <div class="note-card">
+      <p class="nc-label">Texto</p>
+      <p class="nc-title">Bold Italic — Sobre Impresión</p>
+      <p class="nc-body">Los ingredientes aparecen en cursiva negrita — <em>estilo Playfair Display Bold Italic</em> — palabra por palabra. Letra blanca con sombra suave para legibilidad sobre cualquier fondo. Entrada directa al corte.</p>
+    </div>
+    <div class="note-card">
+      <p class="nc-label">Pantalla Dividida</p>
+      <p class="nc-title">Split Horizontal — Top / Bottom</p>
+      <p class="nc-body">Las tomas 03 y 04 de cada video usan división horizontal: panel superior con ingredientes en movimiento, panel inferior con el producto estático. Línea de corte limpia sin gradiente. La división aparece con el corte.</p>
+    </div>
+    <div class="note-card">
+      <p class="nc-label">Sistema de Color</p>
+      <p class="nc-title">Paleta por Producto</p>
+      <p class="nc-body">Cada video opera dentro del universo cromático de su producto. Pink Paradise: rosas y magenta. Tropical: naranja cálido y ámbar. Summer Red: carmesí profundo. Los fondos y splashes respetan la paleta de cada pieza.</p>
+    </div>
+    <div class="note-card">
+      <p class="nc-label">Lenguaje de Cámara</p>
+      <p class="nc-title">Bajo, Macro, Cenital</p>
+      <p class="nc-body">Ángulo bajo para reveals de producto, macro cenital para vertidos de líquido y lateral cercano para momentos de decoración. Sin planos generales hasta el plano final héroe en segundos 10–12.</p>
+    </div>
+    <div class="note-card">
+      <p class="nc-label">Plano Final</p>
+      <p class="nc-title">Cierre Coherente de Serie</p>
+      <p class="nc-body">Los tres videos terminan con la misma estructura: cocktail terminado + botella del producto, plano amplio estático, superficie del color del producto, logo Frontera al centro inferior. Coherencia de serie.</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════
+     ESPECIFICACIONES
+══════════════════════════════════════════ -->
+<section class="tech-specs" id="tech">
+  <p class="section-label" data-reveal="left">Especificaciones Técnicas</p>
+  <h2 class="overview-title" data-reveal="up" style="--delay:80ms">Producción</h2>
+
+  <div class="spec-wrap" data-stagger style="--base:100ms">
+    <div class="spec-row"><span class="spec-key">Duración por video</span><span class="spec-val">12 segundos</span></div>
+    <div class="spec-row"><span class="spec-key">Formatos</span><span class="spec-val">4:5 (1080×1350 px) · 9:16 (1080×1920 px)</span></div>
+    <div class="spec-row"><span class="spec-key">Velocidad de cuadros</span><span class="spec-val">24 fps cinematográfico / 30 fps entrega</span></div>
+    <div class="spec-row"><span class="spec-key">Generación de imágenes</span><span class="spec-val">Nanobanana · ChatGPT (DALL-E)</span></div>
+    <div class="spec-row"><span class="spec-key">Generación de video</span><span class="spec-val">Seedance 2.0 · Kling 3.0 4K</span></div>
+    <div class="spec-row"><span class="spec-key">Tipografía sobre impresión</span><span class="spec-val">Bold Italic · Playfair Display</span></div>
+    <div class="spec-row"><span class="spec-key">Split screen</span><span class="spec-val">Horizontal (top / bottom)</span></div>
+    <div class="spec-row"><span class="spec-key">Total de tomas por video</span><span class="spec-val">8 tomas · promedio 1.5 seg. c/u</span></div>
+    <div class="spec-row"><span class="spec-key">Entrega</span><span class="spec-val">MP4 H.264 · Ambos formatos por video</span></div>
+    <div class="spec-row"><span class="spec-key">Audio</span><span class="spec-val">Música + efectos de sonido · A definir en Fase 2</span></div>
+  </div>
+</section>
+
+<!-- ══════════════════════════════════════════
+     FOOTER
+══════════════════════════════════════════ -->
+<footer data-reveal="fade">
+  <img class="footer-logo" src="../LOGO FRUTAL.png" alt="Frontera Frutal" />
+  <span class="footer-note">Confidencial — Borrador para Revisión del Cliente · Abril 2026</span>
+</footer>
+
+<!-- ══════════════════════════════════════════
+     JS — ANIMACIONES + NAV + PROGRESO
+══════════════════════════════════════════ -->
+<script>
+(function(){
+
+  // Barra de progreso
+  const fill = document.getElementById('prog-fill');
+  function updateProg(){
+    const t = document.documentElement.scrollHeight - window.innerHeight;
+    fill.style.transform = 'scaleX(' + (t > 0 ? window.scrollY / t : 0) + ')';
+  }
+  window.addEventListener('scroll', updateProg, {passive:true});
+  updateProg();
+
+  // Nav active
+  const navAs = document.querySelectorAll('.nav-links a[href^="#"]');
+  const secs  = [...navAs].map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  function updateNav(){
+    const mid = window.scrollY + window.innerHeight * .38;
+    let cur = null;
+    secs.forEach(s => { if(s.offsetTop <= mid) cur = s; });
+    navAs.forEach(a => a.classList.toggle('active', cur && '#'+cur.id === a.getAttribute('href')));
+  }
+  window.addEventListener('scroll', updateNav, {passive:true});
+  updateNav();
+
+  // Asignar --i a hijos de stagger
+  document.querySelectorAll('[data-stagger]').forEach(el => {
+    [...el.children].forEach((c,i) => c.style.setProperty('--i', i));
+  });
+
+  // Asignar --i a timeline segs
+  document.querySelectorAll('[data-timeline] .tl-seg').forEach((s,i) => s.style.setProperty('--i', i));
+
+  // IntersectionObserver
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.07, rootMargin: '0px 0px -44px 0px' });
+
+  document.querySelectorAll('[data-reveal],[data-stagger],[data-timeline]')
+    .forEach(el => io.observe(el));
+
+})();
+</script>
+
+</body>
+</html>
